@@ -22,6 +22,9 @@ public interface PinnedMessageRepository {
 			""")
 	void delete(@Param("messageId") Long messageId, @Param("groupId") String groupId);
 
+	@Delete("DELETE FROM db.pinned_messages WHERE group_id = #{groupId}")
+	void deleteByGroupId(@Param("groupId") String groupId);
+
 	@Select("""
 			SELECT
 			    id,

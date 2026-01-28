@@ -57,4 +57,10 @@ public interface ChatMessagesRepository {
 
 	@Delete("DELETE FROM db.chat_messages WHERE id = #{messageId}")
 	void deleteById(@Param("messageId") Long messageId);
+
+	@Delete("DELETE FROM db.chat_messages WHERE group_id = #{groupId}")
+	void deleteByGroupId(@Param("groupId") String groupId);
+
+	@Select("SELECT id FROM db.chat_messages WHERE group_id = #{groupId}")
+	List<Integer> getGroupsMessageIds(@Param("groupId") String groupId);
 }

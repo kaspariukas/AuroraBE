@@ -1,13 +1,19 @@
 package com.example.kns.services;
 
+import com.example.kns.chat.repository.ChatMessagesRepository;
 import com.example.kns.dto.UserContext;
 import com.example.kns.dto.UserDataDto;
+import com.example.kns.file.repository.FileAttachmentRepository;
+import com.example.kns.group.repository.GroupRepository;
+import com.example.kns.group.service.GroupService;
+import com.example.kns.pin_message.repository.PinnedMessageRepository;
 import com.example.kns.repositories.UserAccountRepository;
 import com.example.kns.user_groups.repository.UserGroupRepository;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.Integer;
@@ -23,6 +29,10 @@ public class UserAccountService {
 	private static final int MAX_TRIES = 20;
 	private final UserAccountRepository userRepo;
 	private final UserGroupRepository userGroupRepo;
+	private final GroupRepository groupRepo;
+	private final PinnedMessageRepository pinnedMessageRepo;
+	private final ChatMessagesRepository chatMessRepo;
+	private final FileAttachmentRepository fileAttachmentRepo;
 	private final Random random = new Random();
 
 	public UserDataDto getUser(UserContext userContext) {
@@ -42,8 +52,24 @@ public class UserAccountService {
 		return usersDataDto;
 	}
 
+	@Transactional
 	public void deleteUser(UserContext userContext) {
-		userGroupRepo.deleteByUserId(userContext.getEmail());
+		final var groupsList = userGroupRepo.findGroupIdsByUserId(userContext.getEmail());
+
+		for (var groupId : groupsList) {
+			var messageIdList = chatMessRepo.getGroupsMessageIds(groupId);
+
+			for (var messageId : messageIdList) {
+				fileAttachmentRepo.deleteByMessageId(messageId);
+			}
+
+			pinnedMessageRepo.deleteByGroupId(groupId);
+			chatMessRepo.deleteByGroupId(groupId);
+
+			userGroupRepo.deleteAllMembershipsByGroupId(groupId);
+			groupRepo.deleteGroup(groupId);
+		}
+
 		userRepo.delete(userContext);
 	}
 

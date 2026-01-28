@@ -70,4 +70,7 @@ public interface FileAttachmentRepository {
 
 	@Delete("DELETE FROM db.file_attachments WHERE id = #{fileId}")
 	void deleteById(@Param("fileId") Long fileId);
+
+	@Delete("DELETE FROM db.file_attachments WHERE message_id = #{messageId}")
+	void deleteByMessageId(@Param("messageId") Integer messageId);
 }

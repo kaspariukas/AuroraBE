@@ -37,7 +37,7 @@ Link to the Firebase project: https://console.firebase.google.com/project/source
 
 **Cloudinary (for file uploads)**
 1. Create a Cloudinary account at https://cloudinary.com
-2. Create `src/main/resources/cloudinary.json` with:
+2. Create `src/main/resources/cloudinary/cloudinary.json` with:
 ```json
 {
   "cloud_name": "your-cloud-name",

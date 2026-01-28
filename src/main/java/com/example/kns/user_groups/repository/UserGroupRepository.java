@@ -28,6 +28,9 @@ public interface UserGroupRepository {
 			""")
 	List<String> findUserIdsByGroupId(@Param("groupId") String groupId);
 
-	@Delete("DELETE FROM db.user_groups WHERE user_id = #{userId}")
-	void deleteByUserId(@Param("userId") String userId);
+	@Select("SELECT group_id FROM db.user_groups WHERE user_id = #{userId}")
+	List<String> findGroupIdsByUserId(@Param("userId") String userId);
+
+	@Delete("DELETE FROM db.user_groups WHERE group_id = #{groupId}")
+	void deleteAllMembershipsByGroupId(@Param("groupId") String groupId);
 }

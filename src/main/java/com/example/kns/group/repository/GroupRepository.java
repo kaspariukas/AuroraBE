@@ -68,6 +68,9 @@ public interface GroupRepository {
 			""")
 	void insert(@Param("id") String id, @Param("name") String name, @Param("image") String image);
 
+	@Delete("DELETE from db.groups WHERE id = #{groupId}")
+	void deleteGroup(@Param("groupId") String groupId);
+
 	@Delete("""
 			   		DELETE FROM db.groups g
 			   		USING db.server_groups sg,
